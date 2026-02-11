@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://your-backend-service-name.onrender.com';
+
 function EmailManager({ userToken }) {
   const [emails, setEmails] = useState([]);
 
   const fetchEmails = async () => {
-    const res = await axios.post('http://localhost:5000/api/get-emails', {
+    const res = await axios.post(`${API_URL}/api/get-emails', {
       token: userToken.access_token
     });
     setEmails(res.data);
@@ -25,7 +29,7 @@ function EmailManager({ userToken }) {
   };
   const toggleReadStatus = async (emailId, currentlyUnread) => {
     try {
-      await axios.post('http://localhost:5000/api/mark-unread', {
+      await await axios.post(`${API_URL}/api/mark-unread', {
         token: userToken.access_token,
         messageId: emailId,
         isUnread: !currentlyUnread // Flip the status
