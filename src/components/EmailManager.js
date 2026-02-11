@@ -1,97 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000' 
-  : 'https://your-backend-service-name.onrender.com';
+const API_URL = window.location.hostname === 'localhost'
+? 'http://localhost:5000'
+: '';
 
 function EmailManager({ userToken }) {
-  const [emails, setEmails] = useState([]);
+const [emails, setEmails] = useState([]);
 
-  const fetchEmails = async () => {
-    const res = await axios.post(`${API_URL}/api/get-emails', {
-      token: userToken.access_token
-    });
-    setEmails(res.data);
-  };
+const fetchEmails = async () => {
+try {
+const res = await axios.post(${API_URL}/api/get-emails, {
+token: userToken.access_token
+});
+setEmails(res.data);
+} catch (err) {
+console.error("Fetch error:", err);
+}
+};
 
-  useEffect(() => { fetchEmails(); }, []);
+useEffect(() => {
+fetchEmails();
+}, []);
 
-  const handleAction = async (endpoint, messageId) => {
-    try {
-      await axios.post(`http://localhost:5000/api/${endpoint}`, {
-        token: userToken.access_token,
-        messageId: messageId
-      });
-      // Refresh the list so the email "disappears"
-      fetchEmails();
-    } catch (err) { alert("Action failed!"); }
-  };
-  const toggleReadStatus = async (emailId, currentlyUnread) => {
-    try {
-      await await axios.post(`${API_URL}/api/mark-unread', {
-        token: userToken.access_token,
-        messageId: emailId,
-        isUnread: !currentlyUnread // Flip the status
-      });
-      fetchEmails(); // Refresh the list
-    } catch (err) {
-      alert("Failed to change read status");
-    }
-  };
+const handleAction = async (endpoint, messageId) => {
+try {
+await axios.post(${API_URL}/api/${endpoint}, {
+token: userToken.access_token,
+messageId: messageId
+});
+fetchEmails();
+} catch (err) {
+alert("Action failed!");
+}
+};
 
-  return (
-    <div style={styles.page}>
-      <h2>Gmail Modify Dashboard</h2>
-      <p>Manage your inbox using the <code>gmail.modify</code> scope.</p>
+const toggleReadStatus = async (emailId, currentlyUnread) => {
+try {
+await axios.post(${API_URL}/api/mark-unread, {
+token: userToken.access_token,
+messageId: emailId,
+isUnread: !currentlyUnread
+});
+fetchEmails();
+} catch (err) {
+alert("Failed to change read status");
+}
+};
 
-      <div style={styles.list}>
-        {emails.map(email => (
-          <div key={email.id} style={styles.row}>
-            <div style={styles.info}>
-              <strong>{email.from}</strong>
-              <div>{email.subject}</div>
-            </div>
-            <div style={styles.actions}>
-              <button onClick={() => handleAction('archive-email', email.id)} style={styles.archiveBtn}>Archive</button>
-              <button onClick={() => handleAction('delete-email', email.id)} style={styles.deleteBtn}>Trash</button>
-            </div>
-          </div>
-        ))}
-      </div>
-      {emails.map(email => {
-        // Check if the UNREAD label exists in this email's labels
-        const isUnread = email.labelIds?.includes('UNREAD');
+return (
+<div style={styles.page}>
+<h2 style={styles.title}>KALASAG-MailFlow Dashboard</h2>
+<p style={styles.subtitle}>Manage your inbox using the gmail.modify scope.</p>
 
-        return (
-          <div key={email.id} style={{...styles.row, opacity: isUnread ? 1 : 0.6}}>
-            <div style={styles.info}>
-              <span style={{ color: isUnread ? 'blue' : 'gray' }}>
-                  {isUnread ? '● ' : '○ '}
-              </span>
-              <strong>{email.from}</strong>
-              <div style={{ fontWeight: isUnread ? 'bold' : 'normal' }}>{email.subject}</div>
-            </div>
-            <div style={styles.actions}>
-              <button onClick={() => toggleReadStatus(email.id, isUnread)}>
-                {isUnread ? 'Mark as Read' : 'Mark as Unread'}
-              </button>
-              <button onClick={() => handleAction('archive-email', email.id)}>Archive</button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+);
 }
 
 const styles = {
-  page: { padding: '20px', maxWidth: '800px', margin: '0 auto' },
-  row: { display: 'flex', justifyContent: 'space-between', padding: '15px', borderBottom: '1px solid #ddd', alignItems: 'center', backgroundColor: 'white' },
-  info: { textAlign: 'left', flex: 1 },
-  actions: { display: 'flex', gap: '10px' },
-  archiveBtn: { backgroundColor: '#fbbc05', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' },
-  deleteBtn: { backgroundColor: '#ea4335', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }
+page: { padding: '40px 20px', maxWidth: '900px', margin: '0 auto' },
+title: { color: '#1a73e8' },
+subtitle: { color: '#5f6368', marginBottom: '30px' },
+list: { backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' },
+row: { display: 'flex', justifyContent: 'space-between', padding: '15px', borderBottom: '1px solid #eee', alignItems: 'center' },
+info: { textAlign: 'left', flex: 1 },
+actions: { display: 'flex', gap: '8px' },
+statusBtn: { cursor: 'pointer', padding: '6px' },
+archiveBtn: { backgroundColor: '#fbbc05', border: 'none', padding: '6px', cursor: 'pointer' },
+deleteBtn: { backgroundColor: '#ea4335', color: 'white', border: 'none', padding: '6px', cursor: 'pointer' }
 };
 
 export default EmailManager;
