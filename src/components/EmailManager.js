@@ -21,7 +21,7 @@ function EmailManager({ userToken }) {
       try {
         const url = window.location.hostname === 'localhost' 
           ? 'http://localhost:5000/api/get-emails' 
-          : 'https://your-backend.onrender.com/api/get-emails';
+          : 'https://kalasag-mailflow.onrender.com/';
 
         const res = await axios.post(url, { token: userToken.access_token });
         setEmails(res.data);
