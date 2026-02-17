@@ -1,9 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const { google } = require('googleapis');
 const cors = require('cors');
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://kalasag-mailflow.onrender.com/'],
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 
 //SENDING MESAGE
 app.post('/api/send-email', async (req, res) => {
