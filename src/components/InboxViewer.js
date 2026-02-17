@@ -47,14 +47,9 @@ function InboxViewer({ userToken, onReply }) {
       <h2 style={styles.header}>Inbox</h2>
       {loading ? <p>Loading...</p> : (
         <div style={styles.list}>
-          {emails.map(email => (
-            <div key={email.id} style={styles.emailRow} onClick={() => setSelectedEmail(email)}>
-              <div style={styles.sender}>{email.from.split('<')[0]}</div>
-              <div style={styles.content}>
-                <strong>{email.subject}</strong> - {email.snippet}
-              </div>
-            </div>
-          ))}
+          {Array.isArray(emails) ? emails.map((email) => (
+            <div key={email.id}>{email.subject}</div>
+          )) : <p>Loading emails or error: {JSON.stringify(emails)}</p>}
         </div>
       )}
     </div>
