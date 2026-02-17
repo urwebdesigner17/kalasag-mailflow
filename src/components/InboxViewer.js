@@ -10,7 +10,7 @@ function InboxViewer({ userToken, onReply }) {
     const fetchEmails = async () => {
       setLoading(true);
       try {
-        const res = await axios.post('https://kalasag-mailflow.onrender.com/', {
+        const res = await axios.post('https://kalasag-mailflow.onrender.com/api/get-emails', {
           token: userToken.access_token
         });
         setEmails(res.data);
